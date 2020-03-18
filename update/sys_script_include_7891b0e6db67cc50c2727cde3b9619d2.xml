@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_atear_user_admin.RequestUtil</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>RequestUtil</name>
+        <script><![CDATA[/**@Class */
+var RequestUtil = Class.create();
+RequestUtil.prototype = {
+    initialize: function () {
+    },
+    //Response codes
+    responseMap: {
+        'userAdministrationRequestProcessed': {
+            'level': 'info',
+            'http_status': '200',
+            'status_message': 'The User Administration Request has been processed'
+        },
+        'userIDMissing': {
+            'level': 'error',
+            'http_status': '400',
+            'status_message': "User Administration Request has not been processed, UserID was not specified."
+        },
+        'missngFields': {
+            'level': 'error',
+            'http_status': '400',
+            'status_message': "Mandatory fields missing"
+        },
+        'unknownError': {
+            'level': 'error',
+            'http_status': '400',
+            'status_message': "User Administration Request has not been processed, an Unkown error has occured"
+        },
+        'serverError': {
+            'level': 'error',
+            'http_status': '500'
+        }
+    },
+
+    /**
+     * Function that handles the response
+     * @param {boolean} isErrorResponse Flags an error specific response
+     * @param {String} responseMap a JSON structure representing the particular response attributes
+     * @returns {string} JSON Structure
+     */
+    handleResponse: function (isErrorResponse, responseMap) {
+        var status = responseMap;
+        if (isErrorResponse) {
+            return status;
+        }
+    },
+
+    /**
+     * 
+     * @param {String} userID UserID of the user that needs user rights
+     * @param {String} description Description of the rigths needed
+     * @returns {Object} Status for the reques
+     */
+    createResolvedRequest: function (userID, description) {
+        try {
+            var request = new GlideRecord('incident');
+            request.initialize();
+            var gdt = new GlideDateTime();
+
+            request.u_case_type = 'RN_request';
+            request.caller_id = 'ekst';
+            request.business_service = 'ca96985edb8d36808e11f5461d96192a'; //Brugeradministration
+            request.u_user_administration_type = 'Tildeling af rettigheder';
+            request.u_rpa = 'BA Robot - Pandemi';
+            request.short_description = 'Tildeling af rettigheder til ' + userID + ' af BA Robot - Pandemi';
+            request.u_html_description = description;
+            request.state = '6'; //Resolved - in order to give the most representative foundation for reporting.
+            request.impact = '3'; //3 - Single Individual
+            request.urgency = '2'; //2 - Work degraded
+            request.assignment_group = '00bf310bdb58b2408e11f5461d961911'; //ServiceDesk
+            request.assigned_to = '80adb9e2db230090c2727cde3b9619cc'; // rn_bpa - BA RPA (DO NOT USE)
+            request.resolved_by = '80adb9e2db230090c2727cde3b9619cc'; // rn_bpa - BA RPA (DO NOT USE)
+            request.resolved_at = gdt;
+            request.u_send_mail = false;
+            request.close_code = '3'; //3 Useradministration
+            request.close_notes = 'Brugeradministrations RPA - Pandemi, har oprettet adgangene';
+            // request.closed_by = '80adb9e2db230090c2727cde3b9619cc'; // rn_bpa - BA RPA (DO NOT USE)
+            // request.closed_at = gdt;
+
+            var req = request.insert();
+
+            if (req) {
+                var response = this.responseMap['userAdministrationRequestProcessed'];
+                response.request_sysid = req;
+                return response;
+            } else {
+                return this.responseMap['unknownError'];
+            }
+        } catch (ex) {
+            var response = this.responseMap['serverError'];
+            response.status_message = 'Internal ServiceNow Error: ' + ex;
+            return response;
+        }
+
+    },
+
+    updateIncidentState: function (sys_id, state) {
+        var incident = new GlideRecord('incident');
+        if (incident.get(sys_id)) {
+            if (state == "resolved") {
+                var gdt = new GlideDateTime();
+
+                incident.state = '6';
+                incident.resolved_by = '80adb9e2db230090c2727cde3b9619cc'; // rn_bpa - BA RPA (DO NOT USE)
+                incident.resolved_at = gdt;
+                incident.u_send_mail = false;
+                incident.close_code = '3'; //3 Useradministration
+                incident.close_notes = 'Brugeradministrations RPA - Pandemi, har oprettet adgangene';
+                incident.update();
+            } else if (state == "failed") {
+                incident.state = '1';  // New
+                incident.assigned_to = "";
+                incident.work_notes = "BA Robot Tried to automatically fulfill this, but failed";
+                incident.update();
+            }
+            var response = this.responseMap['userAdministrationRequestProcessed'];
+            return response;
+        } else {
+            return this.responseMap['unknownError'];
+        }
+    },
+
+    getIncidentsInTimeframe: function (hours) {
+        encQuery = 'active=true^stateNOT IN3,6,7,8^assignment_group=00bf310bdb58b2408e11f5461d961911^assigned_toISEMPTY^business_service=ca96985edb8d36808e11f5461d96192a^short_descriptionLIKEbrugerrettigheder:^ORshort_descriptionLIKEJobfunktion  aktiveret^opened_atRELATIVEGE@hour@ago@' + hours;
+        var incidentArray = [];
+
+        var incidents = new GlideRecord('incident');
+        incidents.setLimit(20);
+        incidents.addEncodedQuery(encQuery);
+        incidents.query();
+
+        while (incidents.next()) {
+            incidentArray.push({
+                incident_number: incidents.getDisplayValue(),
+                incident_sysid: incidents.getUniqueValue(),
+                html: incidents.getDisplayValue('u_html_description'),
+                short_description: incidents.getDisplayValue('short_description')
+            });
+
+            incidents.caller_id = 'ekst';
+            incidents.business_service = 'ca96985edb8d36808e11f5461d96192a'; //Brugeradministration
+            incidents.u_user_administration_type = 'Tildeling af rettigheder';
+            incidents.u_rpa = 'BA Robot - Pandemi';
+            incidents.state = '2'; //In Progress- in order to give the most representative foundation for reporting.
+            incidents.impact = '3'; //3 - Single Individual
+            incidents.urgency = '2'; //2 - Work degraded
+            incidents.assignment_group = '00bf310bdb58b2408e11f5461d961911'; //ServiceDesk
+            incidents.assigned_to = '80adb9e2db230090c2727cde3b9619cc'; // rn_bpa - BA RPA (DO NOT USE)
+            incidents.work_note = 'RPA robot has queued this record'
+            incidents.update();
+        }
+
+        var response = {
+            hours: hours,
+            incidents: incidentArray
+        };
+
+        return response;
+    },
+
+    /**
+     * Main function that the scripted REST ressource calls.
+     * Validate if the userID is present
+     * @param {string} userID the four character specification of the users ID e.g. xyzw. This paramter is mandatory
+     * @returns {string} JSON structure
+     */
+    processRequest: function (userID, description) {
+        //Check if a userID has been supplied
+        if (gs.nil(userID)) {
+            return this.handleResponse(true, this.responseMap['userIDMissing']);
+        } else {
+            return this.createResolvedRequest(userID, description);
+        }
+    },
+
+    processIncidents: function (hours) {
+        return this.getIncidentsInTimeframe(hours.toString());
+    },
+
+    updateIncident: function (sys_id, state) {
+        return this.updateIncidentState(sys_id.toString(), state.toString());
+    },
+
+    type: 'RequestUtil'
+};
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>d23b</sys_created_by>
+        <sys_created_on>2020-03-17 08:40:12</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>7891b0e6db67cc50c2727cde3b9619d2</sys_id>
+        <sys_mod_count>74</sys_mod_count>
+        <sys_name>RequestUtil</sys_name>
+        <sys_package display_value="User Administration" source="x_atear_user_admin">25266ca6dbe3cc50c2727cde3b961916</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="User Administration">25266ca6dbe3cc50c2727cde3b961916</sys_scope>
+        <sys_update_name>sys_script_include_7891b0e6db67cc50c2727cde3b9619d2</sys_update_name>
+        <sys_updated_by>byv1</sys_updated_by>
+        <sys_updated_on>2020-03-18 14:04:00</sys_updated_on>
+    </sys_script_include>
+</record_update>
