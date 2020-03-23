@@ -102,20 +102,23 @@ RequestUtil.prototype = {
 
     },
 
-    updateIncidentState: function (sys_id, state) {
+    updateIncidentState: function (sys_id, state, caller_id) {
         var incident = new GlideRecord('incident');
+        
         if (incident.get(sys_id)) {
             if (state == "resolved") {
-                var gdt = new GlideDateTime();
-
+                var gdt = new GlideDateTime();             
+                incident.caller_id = caller_id;
                 incident.state = '6';
+                incident.assigned_to = '80adb9e2db230090c2727cde3b9619cc'; // rn_bpa - BA RPA (DO NOT USE)
                 incident.resolved_by = '80adb9e2db230090c2727cde3b9619cc'; // rn_bpa - BA RPA (DO NOT USE)
                 incident.resolved_at = gdt;
-                incident.u_send_mail = false;
+                incident.u_send_mail = true;
                 incident.close_code = '3'; //3 Useradministration
-                incident.close_notes = 'Brugeradministrations RPA - Pandemi, har oprettet adgangene';
+                incident.close_notes = 'Oprettet';
                 incident.update();
             } else if (state == "failed") {
+                incident.caller_id = caller_id;
                 incident.state = '1';  // New
                 incident.assigned_to = "";
                 incident.work_notes = "BA Robot Tried to automatically fulfill this, but failed";
@@ -129,7 +132,8 @@ RequestUtil.prototype = {
     },
 
     getIncidentsInTimeframe: function (hours) {
-        encQuery = 'active=true^stateNOT IN3,6,7,8^assignment_group=00bf310bdb58b2408e11f5461d961911^assigned_toISEMPTY^business_service=ca96985edb8d36808e11f5461d96192a^short_descriptionLIKEbrugerrettigheder:^ORshort_descriptionLIKEJobfunktion  aktiveret^opened_atRELATIVEGE@hour@ago@' + hours;
+        encQuery = 'assignment_group=00bf310bdb58b2408e11f5461d961911^stateNOT IN3,6,7,8^business_service=ca96985edb8d36808e11f5461d96192a^assigned_toISEMPTY^short_descriptionLIKEBrugerrettighed^ORshort_descriptionLIKEJobfunktion  aktiveret^short_descriptionLIKEPandemi^active=true^business_service=ca96985edb8d36808e11f5461d96192a^short_descriptionLIKEBrugerrettigheder^ORshort_descriptionLIKEjobfunktion  aktiveret^short_descriptionLIKEPandemi^u_rpaISEMPTY^opened_atRELATIVEGE@hour@ago@' + hours;
+		//encQuery = 'active=true^stateNOT IN3,6,7,8^assignment_group=00bf310bdb58b2408e11f5461d961911^assigned_toISEMPTY^business_service=ca96985edb8d36808e11f5461d96192a^short_descriptionLIKEbrugerrettigheder:^ORshort_descriptionLIKEJobfunktion  aktiveret^opened_atRELATIVEGE@hour@ago@' + hours;
         var incidentArray = [];
 
         var incidents = new GlideRecord('incident');
@@ -145,7 +149,7 @@ RequestUtil.prototype = {
                 short_description: incidents.getDisplayValue('short_description')
             });
 
-            incidents.caller_id = 'ekst';
+            //incidents.caller_id = 'ekst';
             incidents.business_service = 'ca96985edb8d36808e11f5461d96192a'; //Brugeradministration
             incidents.u_user_administration_type = 'Tildeling af rettigheder';
             incidents.u_rpa = 'BA Robot - Pandemi';
@@ -154,7 +158,7 @@ RequestUtil.prototype = {
             incidents.urgency = '2'; //2 - Work degraded
             incidents.assignment_group = '00bf310bdb58b2408e11f5461d961911'; //ServiceDesk
             incidents.assigned_to = '80adb9e2db230090c2727cde3b9619cc'; // rn_bpa - BA RPA (DO NOT USE)
-            incidents.work_note = 'RPA robot has queued this record'
+            incidents.work_notes = 'RPA robot has queued this record'
             incidents.update();
         }
 
@@ -185,8 +189,8 @@ RequestUtil.prototype = {
         return this.getIncidentsInTimeframe(hours.toString());
     },
 
-    updateIncident: function (sys_id, state) {
-        return this.updateIncidentState(sys_id.toString(), state.toString());
+    updateIncident: function (sys_id, state, caller_id) {
+        return this.updateIncidentState(sys_id.toString(), state.toString(), caller_id.toString());
     },
 
     type: 'RequestUtil'
@@ -197,14 +201,14 @@ RequestUtil.prototype = {
         <sys_created_on>2020-03-17 08:40:12</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>7891b0e6db67cc50c2727cde3b9619d2</sys_id>
-        <sys_mod_count>74</sys_mod_count>
+        <sys_mod_count>80</sys_mod_count>
         <sys_name>RequestUtil</sys_name>
         <sys_package display_value="User Administration" source="x_atear_user_admin">25266ca6dbe3cc50c2727cde3b961916</sys_package>
         <sys_policy>read</sys_policy>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="User Administration">25266ca6dbe3cc50c2727cde3b961916</sys_scope>
         <sys_update_name>sys_script_include_7891b0e6db67cc50c2727cde3b9619d2</sys_update_name>
-        <sys_updated_by>byv1</sys_updated_by>
-        <sys_updated_on>2020-03-18 14:04:00</sys_updated_on>
+        <sys_updated_by>d23b</sys_updated_by>
+        <sys_updated_on>2020-03-23 12:30:29</sys_updated_on>
     </sys_script_include>
 </record_update>
