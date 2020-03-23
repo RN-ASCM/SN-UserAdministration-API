@@ -132,7 +132,7 @@ RequestUtil.prototype = {
     },
 
     getIncidentsInTimeframe: function (hours) {
-        encQuery = 'assignment_group=00bf310bdb58b2408e11f5461d961911^stateNOT IN3,6,7,8^business_service=ca96985edb8d36808e11f5461d96192a^assigned_toISEMPTY^short_descriptionLIKEBrugerrettighed^ORshort_descriptionLIKEJobfunktion  aktiveret^short_descriptionLIKEPandemi^active=true^business_service=ca96985edb8d36808e11f5461d96192a^short_descriptionLIKEBrugerrettigheder^ORshort_descriptionLIKEjobfunktion  aktiveret^short_descriptionLIKEPandemi^u_rpaISEMPTY^opened_atRELATIVEGE@hour@ago@' + hours;
+        encQuery = 'assignment_group=00bf310bdb58b2408e11f5461d961911^stateNOT IN3,6,7,8^business_service=ca96985edb8d36808e11f5461d96192a^assigned_toISEMPTY^short_descriptionLIKEBrugerrettighed^ORshort_descriptionLIKEJobfunktion  aktiveret^short_descriptionLIKEPandemi^active=true^u_rpaISEMPTY^opened_atRELATIVEGE@hour@ago@' + hours;
 		//encQuery = 'active=true^stateNOT IN3,6,7,8^assignment_group=00bf310bdb58b2408e11f5461d961911^assigned_toISEMPTY^business_service=ca96985edb8d36808e11f5461d96192a^short_descriptionLIKEbrugerrettigheder:^ORshort_descriptionLIKEJobfunktion  aktiveret^opened_atRELATIVEGE@hour@ago@' + hours;
         var incidentArray = [];
 
@@ -201,7 +201,7 @@ RequestUtil.prototype = {
         <sys_created_on>2020-03-17 08:40:12</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>7891b0e6db67cc50c2727cde3b9619d2</sys_id>
-        <sys_mod_count>80</sys_mod_count>
+        <sys_mod_count>81</sys_mod_count>
         <sys_name>RequestUtil</sys_name>
         <sys_package display_value="User Administration" source="x_atear_user_admin">25266ca6dbe3cc50c2727cde3b961916</sys_package>
         <sys_policy>read</sys_policy>
@@ -209,6 +209,6 @@ RequestUtil.prototype = {
         <sys_scope display_value="User Administration">25266ca6dbe3cc50c2727cde3b961916</sys_scope>
         <sys_update_name>sys_script_include_7891b0e6db67cc50c2727cde3b9619d2</sys_update_name>
         <sys_updated_by>d23b</sys_updated_by>
-        <sys_updated_on>2020-03-23 12:30:29</sys_updated_on>
+        <sys_updated_on>2020-03-23 13:12:55</sys_updated_on>
     </sys_script_include>
 </record_update>
