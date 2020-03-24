@@ -42,12 +42,12 @@
         <donut_width_percent>50</donut_width_percent>
         <end_time/>
         <exp_report_attrs>true</exp_report_attrs>
-        <field>active</field>
-        <field_list/>
-        <filter table="incident">assignment_group=00bf310bdb58b2408e11f5461d961911^state=6^business_service=ca96985edb8d36808e11f5461d96192a^resolved_atONLast 30 days@javascript:gs.beginningOfLast30Days()@javascript:gs.endOfLast30Days()^resolved_by=80adb9e2db230090c2727cde3b9619cc<item display_table="sys_user_group" display_value="ServiceDesk" endquery="false" field="assignment_group" goto="false" newquery="false" operator="=" or="false" value="00bf310bdb58b2408e11f5461d961911"/>
+        <field/>
+        <field_list>number,caller_id,short_description,state,assigned_to,u_rpa,sys_created_on,resolved_at</field_list>
+        <filter table="incident">assignment_group=00bf310bdb58b2408e11f5461d961911^state=6^business_service=ca96985edb8d36808e11f5461d96192a^resolved_atONToday@javascript:gs.beginningOfToday()@javascript:gs.endOfToday()^resolved_by=80adb9e2db230090c2727cde3b9619cc<item display_table="sys_user_group" display_value="ServiceDesk" endquery="false" field="assignment_group" goto="false" newquery="false" operator="=" or="false" value="00bf310bdb58b2408e11f5461d961911"/>
             <item display_value="Resolved" endquery="false" field="state" goto="false" newquery="false" operator="=" or="false" value="6"/>
             <item display_table="cmdb_ci_service" display_value="Brugeradministration" endquery="false" field="business_service" goto="false" newquery="false" operator="=" or="false" value="ca96985edb8d36808e11f5461d96192a"/>
-            <item endquery="false" field="resolved_at" goto="false" newquery="false" operator="ON" or="false" value="Last 30 days@javascript:gs.beginningOfLast30Days()@javascript:gs.endOfLast30Days()"/>
+            <item endquery="false" field="resolved_at" goto="false" newquery="false" operator="ON" or="false" value="Today@javascript:gs.beginningOfToday()@javascript:gs.endOfToday()"/>
             <item display_table="sys_user" display_value="BA RPA (DO NOT USE) " endquery="false" field="resolved_by" goto="false" newquery="false" operator="=" or="false" value="80adb9e2db230090c2727cde3b9619cc"/>
         </filter>
         <from/>
@@ -55,7 +55,7 @@
         <gauge_autoscale>true</gauge_autoscale>
         <group/>
         <import_table/>
-        <interval>date</interval>
+        <interval>year</interval>
         <is_published>false</is_published>
         <is_real_time>false</is_real_time>
         <is_scheduled>false</is_scheduled>
@@ -74,7 +74,7 @@
         <map_source/>
         <orderby_list/>
         <other_threshold>-2</other_threshold>
-        <others>false</others>
+        <others>true</others>
         <page_hdrftr display_value="Default">0ecdb03fc3613000cef73b251eba8f5e</page_hdrftr>
         <pivot_expanded>true</pivot_expanded>
         <report_drilldown/>
@@ -87,7 +87,7 @@
         <sc_stackby_variable_id/>
         <score_color display_value="Green">65b302aea9fe3dba00a530d65ecc2106</score_color>
         <series_name_text/>
-        <set_color>color_palette</set_color>
+        <set_color/>
         <show_chart_border>false</show_chart_border>
         <show_chart_data_label>false</show_chart_data_label>
         <show_chart_title>report</show_chart_title>
@@ -105,25 +105,25 @@
         <sumfield>assigned_to...</sumfield>
         <sys_class_name>sys_report</sys_class_name>
         <sys_created_by>d23b</sys_created_by>
-        <sys_created_on>2020-03-24 08:38:44</sys_created_on>
+        <sys_created_on>2020-03-24 09:19:05</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
-        <sys_id>0084b07cdbb780d0c2727cde3b96199e</sys_id>
-        <sys_mod_count>1</sys_mod_count>
-        <sys_name>Resolved by RPA last 30 days pr. day</sys_name>
+        <sys_id>cbbd7834db3b80d0c2727cde3b961932</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>List of Resolved by RPA today</sys_name>
         <sys_package display_value="User Administration" source="x_atear_user_admin">25266ca6dbe3cc50c2727cde3b961916</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="User Administration">25266ca6dbe3cc50c2727cde3b961916</sys_scope>
-        <sys_update_name>sys_report_0084b07cdbb780d0c2727cde3b96199e</sys_update_name>
+        <sys_update_name>sys_report_cbbd7834db3b80d0c2727cde3b961932</sys_update_name>
         <sys_updated_by>d23b</sys_updated_by>
-        <sys_updated_on>2020-03-24 10:35:05</sys_updated_on>
+        <sys_updated_on>2020-03-24 10:34:26</sys_updated_on>
         <table>incident</table>
-        <title>Resolved by RPA last 30 days pr. day</title>
+        <title>List of Resolved by RPA today</title>
         <title_horizontal_alignment>center</title_horizontal_alignment>
         <title_vertical_alignment>top</title_vertical_alignment>
         <to/>
-        <trend_field>resolved_at</trend_field>
-        <type>line</type>
+        <trend_field>activity_due</trend_field>
+        <type>list</type>
         <upper_limit/>
         <use_color_heatmap>true</use_color_heatmap>
         <use_color_palette>false</use_color_palette>

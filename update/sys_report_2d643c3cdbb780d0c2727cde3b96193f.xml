@@ -79,7 +79,7 @@
         <pivot_expanded>true</pivot_expanded>
         <report_drilldown/>
         <report_source/>
-        <roles>x_atear_user_admin.user</roles>
+        <roles>itil,x_atear_user_admin.user</roles>
         <row>active</row>
         <sc_groupby_item_id/>
         <sc_groupby_variable_id/>
@@ -108,7 +108,7 @@
         <sys_created_on>2020-03-24 08:38:18</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>2d643c3cdbb780d0c2727cde3b96193f</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>2</sys_mod_count>
         <sys_name>Resolved by RPA last 7 days pr. day</sys_name>
         <sys_package display_value="User Administration" source="x_atear_user_admin">25266ca6dbe3cc50c2727cde3b961916</sys_package>
         <sys_policy/>
@@ -116,7 +116,7 @@
         <sys_scope display_value="User Administration">25266ca6dbe3cc50c2727cde3b961916</sys_scope>
         <sys_update_name>sys_report_2d643c3cdbb780d0c2727cde3b96193f</sys_update_name>
         <sys_updated_by>d23b</sys_updated_by>
-        <sys_updated_on>2020-03-24 08:38:18</sys_updated_on>
+        <sys_updated_on>2020-03-24 10:39:15</sys_updated_on>
         <table>incident</table>
         <title>Resolved by RPA last 7 days pr. day</title>
         <title_horizontal_alignment>center</title_horizontal_alignment>
