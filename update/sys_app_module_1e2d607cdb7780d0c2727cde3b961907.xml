@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <application display_value="RN User Administration API">477aa8b4db7780d0c2727cde3b96191b</application>
+        <assessment/>
+        <content_page/>
+        <device_type/>
+        <filter table="incident">assignment_group=00bf310bdb58b2408e11f5461d961911^stateNOT IN3,6,7,8^business_service=ca96985edb8d36808e11f5461d96192a^assigned_toISEMPTY^short_descriptionLIKEBrugerrettighed^ORshort_descriptionLIKEJobfunktion  aktiveret^short_descriptionLIKEPandemi^active=true^u_rpaISEMPTY^EQ<item display_table="sys_user_group" display_value="ServiceDesk" endquery="false" field="assignment_group" goto="false" newquery="false" operator="=" or="false" value="00bf310bdb58b2408e11f5461d961911"/>
+            <item display_value="3,6,7,8" endquery="false" field="state" goto="false" newquery="false" operator="NOT IN" or="false" value="3,6,7,8"/>
+            <item display_table="cmdb_ci_service" display_value="Brugeradministration" endquery="false" field="business_service" goto="false" newquery="false" operator="=" or="false" value="ca96985edb8d36808e11f5461d96192a"/>
+            <item endquery="false" field="assigned_to" goto="false" newquery="false" operator="ISEMPTY" or="false" value=""/>
+            <item endquery="false" field="short_description" goto="false" newquery="false" operator="LIKE" or="false" value="Brugerrettighed"/>
+            <item endquery="false" field="short_description" goto="false" newquery="false" operator="LIKE" or="true" value="Jobfunktion  aktiveret"/>
+            <item endquery="false" field="short_description" goto="false" newquery="false" operator="LIKE" or="false" value="Pandemi"/>
+            <item endquery="false" field="active" goto="false" newquery="false" operator="=" or="false" value="true"/>
+            <item endquery="false" field="u_rpa" goto="false" newquery="false" operator="ISEMPTY" or="false" value=""/>
+            <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
+        </filter>
+        <hint/>
+        <homepage/>
+        <image/>
+        <link_type>LIST</link_type>
+        <map_page/>
+        <mobile_title>Ready for RPA</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name>incident</name>
+        <order>400</order>
+        <override_menu_roles>false</override_menu_roles>
+        <query/>
+        <report/>
+        <roles/>
+        <survey/>
+        <survey_overwrite>true</survey_overwrite>
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>d23b</sys_created_by>
+        <sys_created_on>2020-03-24 08:08:55</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>1e2d607cdb7780d0c2727cde3b961907</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Ready for RPA</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="User Administration" source="x_atear_user_admin">25266ca6dbe3cc50c2727cde3b961916</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="User Administration">25266ca6dbe3cc50c2727cde3b961916</sys_scope>
+        <sys_update_name>sys_app_module_1e2d607cdb7780d0c2727cde3b961907</sys_update_name>
+        <sys_updated_by>d23b</sys_updated_by>
+        <sys_updated_on>2020-03-24 08:08:55</sys_updated_on>
+        <timeline_page/>
+        <title>Ready for RPA</title>
+        <uncancelable>false</uncancelable>
+        <view_name/>
+        <window_name/>
+    </sys_app_module>
+</record_update>
