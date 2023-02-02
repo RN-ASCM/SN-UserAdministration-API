@@ -11,6 +11,8 @@
 var RequestUtil = Class.create();
 RequestUtil.prototype = {
     initialize: function () {
+
+        this.VALID_STATE_PARAMS = ['queued','on_hold','resolved','failed'];
     },
     //Response codes
     responseMap: {
@@ -102,13 +104,27 @@ RequestUtil.prototype = {
 
     },
 
-    updateIncidentState: function (sys_id, state, caller_id) {
+    updateIncidentState: function (sys_id, state, caller_id,  rpa, on_hold_reason, on_hold_reason_text, on_hold_end, user_administration_type, work_note) {
         var incident = new GlideRecord('incident');
-        
+
         if (incident.get(sys_id)) {
+            
+            incident.caller_id = caller_id;
+            if(!gs.nil(rpa))
+            {
+                incident.u_rpa = rpa.toString();
+            }
+            if(!gs.nil(user_administration_type))
+            {
+                incident.u_user_administration_type = user_administration_type.toString();
+            }
+            if(!gs.nil(work_note))
+            {
+                incident.work_notes = work_note.toString();
+            }
+
             if (state == "resolved") {
                 var gdt = new GlideDateTime();             
-                incident.caller_id = caller_id;
                 incident.state = '6';
                 incident.assigned_to = '80adb9e2db230090c2727cde3b9619cc'; // rn_bpa - BA RPA (DO NOT USE)
                 incident.resolved_by = '80adb9e2db230090c2727cde3b9619cc'; // rn_bpa - BA RPA (DO NOT USE)
@@ -118,12 +134,36 @@ RequestUtil.prototype = {
                 incident.close_notes = 'Oprettet';
                 incident.update();
             } else if (state == "failed") {
-                incident.caller_id = caller_id;
                 incident.state = '1';  // New
                 incident.assigned_to = "";
-                incident.work_notes = "BA Robot Tried to automatically fulfill this, but failed";
+                //incident.work_notes = "BA Robot Tried to automatically fulfill this, but failed";
+                incident.u_rpa = gs.nil(rpa) ? 'failed' : ' failed - ' + rpa.toString(); 
+                incident.update();
+            } else if(state == "queued")
+            {
+                //incident.business_service = 'ca96985edb8d36808e11f5461d96192a'; //Brugeradministration
+                //incident.u_user_administration_type = 'Tildeling af rettigheder';
+                incident.state = '2'; //In Progress- in order to give the most representative foundation for reporting.
+                incident.impact = '3'; //3 - Single Individual
+                incident.urgency = '2'; //2 - Work degraded
+                incident.assignment_group = '00bf310bdb58b2408e11f5461d961911'; //ServiceDesk
+                incident.assigned_to = '80adb9e2db230090c2727cde3b9619cc'; // rn_bpa - BA RPA (DO NOT USE)
+                //incident.work_notes = 'RPA robot has queued this record'
+                incident.update();
+
+            }
+            else if (state == "on_hold")
+            {
+                incident.state = '3' //On Hold
+                incident.hold_reason = on_hold_reason.toString();
+                incident.u_reason = on_hold_reason_text.toString();
+                var dt = new GlideDateTime();
+                dt.setDisplayValue(on_hold_end, "yyyy-MM-dd HH:mm:ss");
+                incident.u_on_hold_end = dt;
                 incident.update();
             }
+
+
             var response = this.responseMap['userAdministrationRequestProcessed'];
             return response;
         } else {
@@ -131,24 +171,50 @@ RequestUtil.prototype = {
         }
     },
 
-    getIncidentsInTimeframe: function (hours) {
-        encQuery = 'assignment_group=00bf310bdb58b2408e11f5461d961911^stateNOT IN3,6,7,8^business_service=ca96985edb8d36808e11f5461d96192a^assigned_toISEMPTY^short_descriptionLIKEBrugerrettighed^ORshort_descriptionLIKEJobfunktion  aktiveret^short_descriptionLIKEPandemi^active=true^u_rpaISEMPTY^opened_atRELATIVEGE@hour@ago@' + hours;
+    getIncidents: function (limit, query) {
+        encQuery = 'assignment_group=00bf310bdb58b2408e11f5461d961911^stateNOT IN3,6,7,8^assigned_toISEMPTY^ORassigned_to=80adb9e2db230090c2727cde3b9619cc^u_rpaNOT LIKEfailed^ORu_rpa=NULL';
+        if(!gs.nil(query))
+        {
+            encQuery += '^short_descriptionLIKE' + query;
+        }
+
+        //encQuery = 'assignment_group=00bf310bdb58b2408e11f5461d961911^stateNOT IN3,6,7,8^business_service=ca96985edb8d36808e11f5461d96192a^assigned_toISEMPTY^short_descriptionLIKEBrugerrettighed^ORshort_descriptionLIKEJobfunktion  aktiveret^short_descriptionLIKEPandemi^active=true^u_rpaISEMPTY^opened_atRELATIVEGE@hour@ago@' + hours;
 		//encQuery = 'active=true^stateNOT IN3,6,7,8^assignment_group=00bf310bdb58b2408e11f5461d961911^assigned_toISEMPTY^business_service=ca96985edb8d36808e11f5461d96192a^short_descriptionLIKEbrugerrettigheder:^ORshort_descriptionLIKEJobfunktion  aktiveret^opened_atRELATIVEGE@hour@ago@' + hours;
         var incidentArray = [];
 
         var incidents = new GlideRecord('incident');
-        incidents.setLimit(20);
+        incidents.setLimit(limit);
         incidents.addEncodedQuery(encQuery);
         incidents.query();
 
+        var incidentCount = incidents.getRowCount();
+
         while (incidents.next()) {
+
+            var serviceArray = [];
+            serviceArray.push({
+                displayValue: incidents.getDisplayValue('business_service'),
+                value: incidents.getValue('business_service')
+            })
+
+            var stateArray = [];
+            stateArray.push({
+                displayValue: incidents.getDisplayValue('state'),
+                value: incidents.getValue('state')
+            })
+
             incidentArray.push({
                 incident_number: incidents.getDisplayValue(),
                 incident_sysid: incidents.getUniqueValue(),
                 html: incidents.getDisplayValue('u_html_description'),
-                short_description: incidents.getDisplayValue('short_description')
+                short_description: incidents.getDisplayValue('short_description'),
+                rpa: incidents.getDisplayValue('u_rpa'),
+                state: stateArray,
+                business_service: serviceArray
+
             });
 
+            /**
             //incidents.caller_id = 'ekst';
             incidents.business_service = 'ca96985edb8d36808e11f5461d96192a'; //Brugeradministration
             incidents.u_user_administration_type = 'Tildeling af rettigheder';
@@ -160,10 +226,12 @@ RequestUtil.prototype = {
             incidents.assigned_to = '80adb9e2db230090c2727cde3b9619cc'; // rn_bpa - BA RPA (DO NOT USE)
             incidents.work_notes = 'RPA robot has queued this record'
             incidents.update();
+            */
         }
 
         var response = {
-            hours: hours,
+            limit: limit,
+            returned: incidentCount.toString(),
             incidents: incidentArray
         };
 
@@ -185,12 +253,28 @@ RequestUtil.prototype = {
         }
     },
 
-    processIncidents: function (hours) {
-        return this.getIncidentsInTimeframe(hours.toString());
+    processIncidents: function (limit, query) {
+        return this.getIncidents(limit.toString(), query.toString());
     },
 
-    updateIncident: function (sys_id, state, caller_id) {
-        return this.updateIncidentState(sys_id.toString(), state.toString(), caller_id.toString());
+    updateIncident: function (sys_id, state, caller_id, rpa, on_hold_reason, on_hold_reason_text, on_hold_end, user_administration_type, work_note) {
+        return this.updateIncidentState(sys_id.toString(), state.toString(), caller_id.toString(), rpa, on_hold_reason, on_hold_reason_text, on_hold_end,user_administration_type,work_note);
+    },
+
+    isStateParamValid: function (state){
+        var answer = false;
+        var validStates = this.VALID_STATE_PARAMS;
+        if(!gs.nil(state) && validStates.indexOf(state.toString()) != -1)
+        {
+            answer = true;
+        }
+        return answer;        
+
+    },
+
+    getValidStateParams: function()
+    {
+        return this.VALID_STATE_PARAMS;
     },
 
     type: 'RequestUtil'
@@ -201,7 +285,7 @@ RequestUtil.prototype = {
         <sys_created_on>2020-03-17 08:40:12</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>7891b0e6db67cc50c2727cde3b9619d2</sys_id>
-        <sys_mod_count>82</sys_mod_count>
+        <sys_mod_count>125</sys_mod_count>
         <sys_name>RequestUtil</sys_name>
         <sys_package display_value="User Administration" source="x_atear_user_admin">25266ca6dbe3cc50c2727cde3b961916</sys_package>
         <sys_policy>read</sys_policy>
@@ -209,6 +293,6 @@ RequestUtil.prototype = {
         <sys_scope display_value="User Administration">25266ca6dbe3cc50c2727cde3b961916</sys_scope>
         <sys_update_name>sys_script_include_7891b0e6db67cc50c2727cde3b9619d2</sys_update_name>
         <sys_updated_by>zuve</sys_updated_by>
-        <sys_updated_on>2023-01-31 12:06:02</sys_updated_on>
+        <sys_updated_on>2023-02-02 13:02:55</sys_updated_on>
     </sys_script_include>
 </record_update>

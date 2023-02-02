@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_query_parameter_map">
+    <sys_ws_query_parameter_map action="INSERT_OR_UPDATE">
+        <sys_class_name>sys_ws_query_parameter_map</sys_class_name>
+        <sys_created_by>zuve</sys_created_by>
+        <sys_created_on>2023-02-02 08:13:13</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>ca049a491b3c6110e7e97df4464bcb9b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>26e31ec51b3c6110e7e97df4464bcbb8</sys_name>
+        <sys_package display_value="User Administration" source="x_atear_user_admin">25266ca6dbe3cc50c2727cde3b961916</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="User Administration">25266ca6dbe3cc50c2727cde3b961916</sys_scope>
+        <sys_update_name>sys_ws_query_parameter_map_ca049a491b3c6110e7e97df4464bcb9b</sys_update_name>
+        <sys_updated_by>zuve</sys_updated_by>
+        <sys_updated_on>2023-02-02 08:13:13</sys_updated_on>
+        <web_service_operation display_value="Incidents">118e1276db6b8c50e52e88805b9619c1</web_service_operation>
+        <web_service_query_parameter display_value="limit">26e31ec51b3c6110e7e97df4464bcbb8</web_service_query_parameter>
+    </sys_ws_query_parameter_map>
+</record_update>

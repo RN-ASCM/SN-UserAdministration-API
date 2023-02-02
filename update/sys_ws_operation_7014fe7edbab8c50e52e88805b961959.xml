@@ -10,9 +10,20 @@
         <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
     var returnPayload = {};
     var requestUtil = new x_atear_user_admin.RequestUtil();
-    var stateParam = request.queryParams["state"];
-    var sys_id = request.queryParams["sys_id"];
-	var caller_id = request.queryParams["caller_id"];
+    var requestBody = request.body.dataString;
+    var parser = new global.JSON();
+    var bodyData = parser.decode(requestBody);
+
+
+    var stateParam = bodyData.state;
+    var sys_id = bodyData.sys_id;
+	var caller_id = bodyData.caller_id;
+    var on_hold_reason = bodyData.on_hold_reason;
+    var on_hold_reason_text = bodyData.reason;
+    var on_hold_end = bodyData.on_hold_end;
+    var rpa = bodyData.rpa;
+    var user_administration_type = bodyData.user_administration_type;
+    var work_note = bodyData.work_note;
 
     if (gs.nil(stateParam) || gs.nil(sys_id) || gs.nil(caller_id)) {
         var missingFields = [];
@@ -35,21 +46,46 @@
             status_message: "Mandatory fields missing",
             missing_fields: missingFields
         };
-    } else if (!gs.nil(stateParam) && stateParam != "resolved" && stateParam != "failed") {
+    } else if (!requestUtil.isStateParamValid(stateParam) ) {
         returnPayload = {
             level: 'error',
             http_status: '400',
-            status_message: "Field value not recognized",
-            field: "Field shold be resolved or failed"
+            status_message: "Field value '"+stateParam+"' not recognized",
+            field: "Field shold be queued, on_hold, resolved or failed"
         };
+    } else if (!gs.nil(stateParam) && stateParam.toString() == 'on_hold' && (gs.nil(on_hold_reason) || gs.nil(on_hold_reason_text) || gs.nil(on_hold_end))){
+        var missingOnHold = [];
+
+        if(gs.nil(on_hold_reason))
+        {
+            missingOnHold.push('on_hold_reasom');
+        }
+        if(gs.nil(on_hold_reason_text))
+        {
+            missingOnHold.push('on_hold_reason_text');
+        }
+        if(gs.nil(on_hold_end))
+        {
+            missingOnHold.push('on_hold_end')
+        }
+
+        returnPayload = {
+            level: 'error',
+            http_status: '400',
+            status_message: "Mandatory On hold information is missing ",
+            missing_fields: missingOnHold
+        };
+
     } else {
-        returnPayload = requestUtil.updateIncident(sys_id, stateParam, caller_id);
+        returnPayload = requestUtil.updateIncident(sys_id, stateParam, caller_id, rpa, on_hold_reason, on_hold_reason_text, on_hold_end, user_administration_type, work_note);
     }
 
     response.setContentType('application/json');
     response.setStatus(returnPayload.http_status);
     var writer = response.getStreamWriter();
     writer.writeString(JSON.stringify(returnPayload));
+
+    
 })(request, response);]]></operation_script>
         <operation_uri>/api/x_atear_user_admin/v1/useraaministrationrpa/updateincident</operation_uri>
         <produces>application/json,application/xml,text/xml</produces>
@@ -65,15 +101,15 @@
         <sys_created_on>2020-03-18 12:48:49</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>7014fe7edbab8c50e52e88805b961959</sys_id>
-        <sys_mod_count>19</sys_mod_count>
+        <sys_mod_count>36</sys_mod_count>
         <sys_name>UpdateIncident</sys_name>
         <sys_package display_value="User Administration" source="x_atear_user_admin">25266ca6dbe3cc50c2727cde3b961916</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="User Administration">25266ca6dbe3cc50c2727cde3b961916</sys_scope>
         <sys_update_name>sys_ws_operation_7014fe7edbab8c50e52e88805b961959</sys_update_name>
-        <sys_updated_by>d23b</sys_updated_by>
-        <sys_updated_on>2020-03-23 09:15:53</sys_updated_on>
+        <sys_updated_by>zuve</sys_updated_by>
+        <sys_updated_on>2023-02-02 12:23:29</sys_updated_on>
         <web_service_definition display_value="UserAdministrationRPA">ad9ca866db27cc50c2727cde3b961936</web_service_definition>
         <web_service_version display_value="v1">5edd206adb27cc50c2727cde3b961960</web_service_version>
     </sys_ws_operation>

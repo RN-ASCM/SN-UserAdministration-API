@@ -9,15 +9,23 @@
         <name>Incidents</name>
         <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
     var hours = '1';
+    var limit = '100';
     
     var requestUtil = new x_atear_user_admin.RequestUtil();
-    var hoursParam = request.queryParams["hours"];
+    //var hoursParam = request.queryParams["hours"];
+    var limitParam = request.queryParams["limit"];
+    var queryParam = request.queryParams["query"];
 
-    if(!gs.nil(hoursParam)){
-        hours = hoursParam;
+    //if(!gs.nil(hoursParam)){
+    //    hours = hoursParam;
+    //}
+
+    if(!gs.nil(limit))
+    {
+        limit = limitParam;
     }
 
-    var returnPayload = requestUtil.processIncidents(hours);
+    var returnPayload = requestUtil.processIncidents(limit, queryParam);
 
     //HTTP Status is handled in the import utility
     response.setContentType('application/json');
@@ -40,15 +48,15 @@
         <sys_created_on>2020-03-18 11:14:34</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>118e1276db6b8c50e52e88805b9619c1</sys_id>
-        <sys_mod_count>22</sys_mod_count>
+        <sys_mod_count>25</sys_mod_count>
         <sys_name>Incidents</sys_name>
         <sys_package display_value="User Administration" source="x_atear_user_admin">25266ca6dbe3cc50c2727cde3b961916</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="User Administration">25266ca6dbe3cc50c2727cde3b961916</sys_scope>
         <sys_update_name>sys_ws_operation_118e1276db6b8c50e52e88805b9619c1</sys_update_name>
-        <sys_updated_by>d23b</sys_updated_by>
-        <sys_updated_on>2020-03-23 09:15:28</sys_updated_on>
+        <sys_updated_by>zuve</sys_updated_by>
+        <sys_updated_on>2023-02-02 08:35:31</sys_updated_on>
         <web_service_definition display_value="UserAdministrationRPA">ad9ca866db27cc50c2727cde3b961936</web_service_definition>
         <web_service_version display_value="v1">5edd206adb27cc50c2727cde3b961960</web_service_version>
     </sys_ws_operation>
