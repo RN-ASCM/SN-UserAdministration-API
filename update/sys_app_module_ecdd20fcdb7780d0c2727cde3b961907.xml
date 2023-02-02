@@ -7,7 +7,7 @@
         <device_type/>
         <filter table="incident">state=2^business_service=ca96985edb8d36808e11f5461d96192a^assigned_to=80adb9e2db230090c2727cde3b9619cc^EQ<item display_value="In Progress" endquery="false" field="state" goto="false" newquery="false" operator="=" or="false" value="2"/>
             <item display_table="cmdb_ci_service" display_value="Brugeradministration" endquery="false" field="business_service" goto="false" newquery="false" operator="=" or="false" value="ca96985edb8d36808e11f5461d96192a"/>
-            <item display_table="sys_user" display_value="BA RPA (DO NOT USE) " endquery="false" field="assigned_to" goto="false" newquery="false" operator="=" or="false" value="80adb9e2db230090c2727cde3b9619cc"/>
+            <item display_table="sys_user" display_value="BA RPA " endquery="false" field="assigned_to" goto="false" newquery="false" operator="=" or="false" value="80adb9e2db230090c2727cde3b9619cc"/>
             <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
         </filter>
         <hint/>
